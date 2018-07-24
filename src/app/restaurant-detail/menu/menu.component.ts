@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { RestaurantsService } from '../../Service/restaurant.service';
+import { ActivatedRoute } from '../../../../node_modules/@angular/router';
+import { ShoppingCartService } from '../../Service/shoppingCart.service';
 
 @Component({
   selector: 'mt-menu',
@@ -7,9 +10,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MenuComponent implements OnInit {
 
-  constructor() { }
+
+  menu: any;
+  @Output() add = new EventEmitter();
+
+
+  constructor(private restaurantService: RestaurantsService,
+              private route: ActivatedRoute,
+              private shoppingCart: ShoppingCartService) { }
 
   ngOnInit() {
+    this.loadMenu(this.route.parent.snapshot.params['id']);
+  }
+
+  loadMenu(id: string){
+    return this.restaurantService.menuOfRestaurant(id).
+    subscribe( menu => this.menu = menu);
+  }
+
+  addMenuItem(item: any){
+    //this.add.emit(item);
+    this.shoppingCart.add(item);
+  console.log(item);
   }
 
 }
